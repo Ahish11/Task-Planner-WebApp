@@ -1,0 +1,76 @@
+import { useState } from "react";
+import {
+  ParaAddTask,
+  PopupInner,
+  PopupOuter,
+  AddLabel,
+  WraperInputLabel,
+  AddInput,
+  ErrorMsg,
+} from "./AddTaskPopup.styles";
+import { Overlay, CancelBtn } from "./AddTaskPopup.styles";
+import { AddTaskBtn, SaveAddBtn } from "../TaskComponent/TaskPlanner.styles";
+
+export default function AddTaskPopup(props) {
+  const [addInputVal, setAddInputVal] = useState([{ title: "" }]);
+  const [errorMsg, setErrorMsg] = useState(false);
+
+  const isEmptyHandler = () =>
+    addInputVal.filter((item) => item.title.trim().length === 0).length > 0;
+
+  const saveTaskHandler = (e) => {
+    e.preventDefault();
+
+    if (isEmptyHandler()) {
+      setErrorMsg(true);
+    } else {
+      const titles = addInputVal.map((item) => item.title);
+      props.inputValfromAddTaskPopup(titles);
+      props.removePopup();
+    }
+  };
+
+  const handleOnchange = (e) => {
+    setAddInputVal([{ title: e.target.value }]);
+    setErrorMsg(false);
+  };
+
+  const filteredValue =
+    addInputVal.filter((item) => item.title.trim().length > 0)[0]?.title || "";
+
+  return (
+    <>
+      <form action="">
+        <Overlay onClick={props.removePopup}></Overlay>
+        <PopupOuter>
+          <PopupInner style={{ zIndex: "3" }}>
+            <ParaAddTask>Add</ParaAddTask>
+            <WraperInputLabel>
+              <AddLabel htmlFor="title">Title</AddLabel>
+              <AddInput
+                id="title"
+                style={{
+                  border: errorMsg ? "1px solid red" : "1px solid #fafafa",
+                }}
+                type="text"
+                value={filteredValue}
+                onChange={handleOnchange}
+              />
+              {errorMsg && <ErrorMsg>please enter something</ErrorMsg>}
+            </WraperInputLabel>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "30px",
+              }}
+            >
+              <SaveAddBtn onClick={saveTaskHandler}>Save Task</SaveAddBtn>
+              <CancelBtn onClick={props.removePopup}>Cancel</CancelBtn>
+            </div>
+          </PopupInner>
+        </PopupOuter>
+      </form>
+    </>
+  );
+}
