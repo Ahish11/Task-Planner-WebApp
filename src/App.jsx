@@ -1,9 +1,12 @@
 import { useState } from "react";
+import TaskPlanner from "./components/TaskComponent/TaskPlanner";
+import "./components/TaskComponent/TaskPlanner.styles";
+import "./components/style.css"
 
 function App() {
   return (
     <>
-      <p className="check">hello from master</p>
+      <TaskPlanner />
     </>
   );
 }
