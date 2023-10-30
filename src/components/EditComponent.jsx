@@ -1,18 +1,26 @@
 import React, { useState } from "react";
 import { IoMdCheckmark } from "react-icons/io";
 
-export default function EditComponent({ editTodo, task }) {
-  const [value, setValue] = useState(task.title);
+export default function EditComponent({ hasEditHandler, hasInputValue }) {
+  const [value, setValue] = useState(hasInputValue.title);
+  // const [emtyTitleEdit, setemtyTitleEdit] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [cursorStyle, setCursorStyle] = useState("pointer");
+
+  const EditSubmitHandler = (e) => {
     e.preventDefault();
-    editTodo(value, task.id);
+    if (value.length !== 0) {
+      hasEditHandler(value, hasInputValue.id);
+    }
+    //  else {
+    //   setCursorStyle("not-allowed");
+    // }
   };
 
   return (
     <div>
       <form
-        onSubmit={handleSubmit}
+        // onSubmit={EditSubmitHandler}
         style={{
           display: "flex",
           alignItems: "center",
@@ -23,13 +31,30 @@ export default function EditComponent({ editTodo, task }) {
           style={{ border: 0, fontSize: "13px", outline: 0, width: "86%" }}
           type="text"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value.trimStart());
+            if (e.target.value.length !== 0) {
+              setCursorStyle("pointer");
+            } else {
+              setCursorStyle("not-allowed");
+            }
+          }}
         />
         <button
+          className="test"
+          // onClick={updateHandler}
           type="submit"
-          style={{ all: "unset", width: "39px", display: "inline-block" }}
+          style={{
+            all: "unset",
+            display: "inline-block",
+            cursor: cursorStyle,
+          }}
         >
-          <IoMdCheckmark />
+          {/* save edit btn */}
+          <IoMdCheckmark
+            style={{ width: "30px" }}
+            onClick={EditSubmitHandler}
+          />
         </button>
       </form>
     </div>
