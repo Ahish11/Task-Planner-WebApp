@@ -54,6 +54,13 @@ export const DivItems = styled.div`
 `;
 export const TaskplannerHeading = styled.div`
   margin: 10px 0 10px 0;
+  background: transparent
+    linear-gradient(262deg, #5dbaff 0%, #ffa5cb 38%, #db537f 63%, #615ad3 100%)
+    0% 0% no-repeat padding-box;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  font-size: 25px;
 `;
 export const OuterAddTask = styled.div`
   display: flex;

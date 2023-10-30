@@ -16,11 +16,11 @@ export default function AddTaskPopup(props) {
   const [errorMsg, setErrorMsg] = useState(false);
 
   const isEmptyHandler = () =>
-    addInputVal.filter((item) => item.title.trim().length === 0).length > 0;
+    // addInputVal.filter((addInputVals) => addInputVals.title.trim().length === 0).length > 0; or
+    addInputVal.filter((addInputVals) => addInputVals.title.trim()).length <= 0;
 
   const saveTaskHandler = (e) => {
     e.preventDefault();
-
     if (isEmptyHandler()) {
       setErrorMsg(true);
     } else {
@@ -35,6 +35,7 @@ export default function AddTaskPopup(props) {
     setErrorMsg(false);
   };
 
+  //Add Task btn click
   const filteredValue =
     addInputVal.filter((item) => item.title.trim().length > 0)[0]?.title || "";
 
@@ -56,7 +57,7 @@ export default function AddTaskPopup(props) {
                 value={filteredValue}
                 onChange={handleOnchange}
               />
-              {errorMsg && <ErrorMsg>please enter something</ErrorMsg>}
+              {errorMsg && <ErrorMsg>Please enter the title</ErrorMsg>}
             </WraperInputLabel>
             <div
               style={{

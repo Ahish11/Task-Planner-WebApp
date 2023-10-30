@@ -31,35 +31,74 @@ export default function TaskPlanner() {
   const [inputValue, setInputValue] = useState([]); // Task list
 
   const popupHandler = () => {
-    setAddList(!addTaskList);
+    setAddList(!addTaskList); //shows popup
   };
 
-  const handleInputValue = (getValueFromProperty) => {
-    const newTask = { id: Date.now(), title: getValueFromProperty };
+  //child to parent
+  const handleInputValue = (getTitle) => {
+    const newTask = { id: Date.now(), title: getTitle };
     setInputValue([...inputValue, newTask]);
-    popupHandler();
+    popupHandler(); //removes popup
   };
 
-  const onDeleteHandler = (taskId) => {
-    setInputValue(inputValue.filter((task) => task.id !== taskId));
-  };
-
-  const onEditHandler = (id) => {
+  const onDeleteHandler = (getInpVal) => {
     setInputValue(
-      inputValue.map((items) =>
-        items.id === id ? { ...items, isEditing: !items.isEditing } : items
+      inputValue.filter((inputValues) => inputValues.id !== getInpVal)
+    );
+  };
+
+  const onEditHandler = (getInputValues) => {
+    setInputValue(
+      inputValue.map((inputValues) =>
+        inputValues.id === getInputValues
+          ? { ...inputValues, isEditing: !inputValues.isEditing }
+          : inputValues
       )
     );
   };
 
-  const editTask = (editedTask, id) => {
+  const editTaskHandler = (editedTitle, id) => {
     setInputValue((prevInputValue) =>
-      prevInputValue.map((task) =>
-        task.id === id ? { ...task, title: editedTask, isEditing: false } : task
+      prevInputValue.map((prevInputVal) =>
+        prevInputVal.id === id
+          ? { ...prevInputVal, title: editedTitle, isEditing: false }
+          : prevInputVal
       )
     );
   };
 
+  const result =
+    inputValue.length === 0 ? (
+      <NoTodo>No Todo's Found</NoTodo>
+    ) : (
+      inputValue.map((inputValues) => (
+        <Todos key={inputValues.id}>
+          <div>
+            {inputValues.isEditing ? (
+              <EditComponent
+                hasInputValue={inputValues}
+                hasEditHandler={editTaskHandler}
+              /> // Use EditComponent when editing
+            ) : (
+              <InnerRow>
+                <div>{inputValues.title}</div>
+                <InnerRow>
+                  <DeleteBtn>
+                    <AiOutlineDelete
+                      style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
+                      onClick={() => onDeleteHandler(inputValues.id)}
+                    />
+                  </DeleteBtn>
+                  <EditBtn onClick={() => onEditHandler(inputValues.id)}>
+                    <FaRegEdit style={{ cursor: "pointer" }} />
+                  </EditBtn>
+                </InnerRow>
+              </InnerRow>
+            )}
+          </div>
+        </Todos>
+      ))
+    );
   return (
     <>
       <ContainerBg>
@@ -68,40 +107,10 @@ export default function TaskPlanner() {
           <div>
             <AddTaskBtn onClick={popupHandler}>Add Task</AddTaskBtn>
           </div>
-          <div>ALL</div>
+          {/* <div>ALL</div> */}
         </OuterAddTask>
-        <DivItems>
-          {inputValue.length === 0 ? (
-            <NoTodo>No Todo's Found</NoTodo>
-          ) : (
-            inputValue.map((inputValues) => (
-              <Todos key={inputValues.id}>
-                <div>
-                  {inputValues.isEditing ? (
-                    <EditComponent task={inputValues} editTodo={editTask} /> // Use EditComponent when editing
-                  ) : (
-                    <InnerRow>
-                      <div>{inputValues.title}</div>
-                      <InnerRow>
-                        <DeleteBtn>
-                          <AiOutlineDelete
-                            style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
-                            onClick={() => onDeleteHandler(inputValues.id)}
-                          />
-                        </DeleteBtn>
-                        <EditBtn onClick={() => onEditHandler(inputValues.id)}>
-                          <FaRegEdit />
-                        </EditBtn>
-                      </InnerRow>
-                    </InnerRow>
-                  )}
-                </div>
-              </Todos>
-            ))
-          )}
-        </DivItems>
+        <DivItems>{result}</DivItems>
       </ContainerBg>
-
       {addTaskList && (
         <AddTaskPopup
           removePopup={popupHandler}
