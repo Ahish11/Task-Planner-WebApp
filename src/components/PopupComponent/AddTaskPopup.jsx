@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ParaAddTask,
   PopupInner,
@@ -14,6 +14,7 @@ import { AddTaskBtn, SaveAddBtn } from "../TaskComponent/TaskPlanner.styles";
 export default function AddTaskPopup(props) {
   const [addInputVal, setAddInputVal] = useState([{ title: "" }]);
   const [errorMsg, setErrorMsg] = useState(false);
+  const enteredDate = useRef();
 
   const isEmptyHandler = () =>
     // addInputVal.filter((addInputVals) => addInputVals.title.trim().length === 0).length > 0; or
@@ -21,12 +22,14 @@ export default function AddTaskPopup(props) {
 
   const saveTaskHandler = (e) => {
     e.preventDefault();
+    console.log(enteredDate.current.value);
     if (isEmptyHandler()) {
       setErrorMsg(true);
     } else {
       const titles = addInputVal.map((item) => item.title);
-      props.inputValfromAddTaskPopup(titles);
-      props.removePopup();
+      props.inputValfromAddTaskPopup(titles);//title
+      props.enteredDateFromAddTaskPopup(enteredDate.current.value)//date
+      props.removePopup();//close popup
     }
   };
 
@@ -58,6 +61,21 @@ export default function AddTaskPopup(props) {
                 onChange={handleOnchange}
               />
               {errorMsg && <ErrorMsg>Please enter the title</ErrorMsg>}
+            </WraperInputLabel>
+
+            <WraperInputLabel>
+              <AddLabel htmlFor="date">Date</AddLabel>
+              <AddInput
+                id="date"
+                // style={{
+                //   border: errorMsg ? "1px solid red" : "1px solid #fafafa",
+                // }}
+                type="date"
+                // value={filteredValue}
+                ref={enteredDate}
+                // onChange={handleOnchange}
+              />
+              {/* {errorMsg && <ErrorMsg>Please enter the title</ErrorMsg>} */}
             </WraperInputLabel>
             <div
               style={{

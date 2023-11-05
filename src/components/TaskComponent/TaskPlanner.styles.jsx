@@ -25,13 +25,14 @@ export const SaveAddBtn = styled(AddTaskBtn)``;
 export const Todos = styled.div`
   background-color: white;
   border-radius: 2px;
-  padding: 10px 8px;
+  padding: 20px 8px;
   width: calc(100% - 20px);
 `;
 export const InnerRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 `;
 export const NoTodo = styled(CommonButton)`
   background-color: #dedfe1;
@@ -74,3 +75,12 @@ export const EditBtn = styled.button`
   display: inline-block;
 `;
 export const DeleteBtn = styled(EditBtn)``;
+
+export const OuterDate = styled.div`
+  position: absolute;
+  top: 28px;
+  left: 0px;
+  font-size: 9px;
+  font-weight: 600;
+  color: cadetblue;
+`;

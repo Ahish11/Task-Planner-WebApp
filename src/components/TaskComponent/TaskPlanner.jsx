@@ -12,6 +12,7 @@ import {
   Todos,
   EditBtn,
   DeleteBtn,
+  OuterDate,
 } from "./TaskPlanner.styles";
 import AddTaskPopup from "../PopupComponent/AddTaskPopup";
 import EditComponent from "../EditComponent"; // Import EditComponent
@@ -29,6 +30,9 @@ export default function TaskPlanner() {
 
   const [addTaskList, setAddList] = useState(false); // Popup
   const [inputValue, setInputValue] = useState([]); // Task list
+  const [enteredDate, setEnteredDate] = useState([]); // date
+
+  console.log("enteredDate", enteredDate);
 
   const popupHandler = () => {
     setAddList(!addTaskList); //shows popup
@@ -40,6 +44,12 @@ export default function TaskPlanner() {
     setInputValue([...inputValue, newTask]);
     popupHandler(); //removes popup
   };
+  const handleEnteredDate = (getEnteredDate) => {
+    console.log("getEnteredDate", getEnteredDate);
+    const newTasks = { id: Date.now(), dateValue: getEnteredDate };
+    setEnteredDate([...enteredDate, newTasks]);
+    popupHandler(); //removes popup
+  };
 
   const onDeleteHandler = (getInpVal) => {
     setInputValue(
@@ -47,10 +57,11 @@ export default function TaskPlanner() {
     );
   };
 
-  const onEditHandler = (getInputValues) => {
+  // Edit btn
+  const onEditHandler = (getInputValuesId) => {
     setInputValue(
       inputValue.map((inputValues) =>
-        inputValues.id === getInputValues
+        inputValues.id === getInputValuesId
           ? { ...inputValues, isEditing: !inputValues.isEditing }
           : inputValues
       )
@@ -61,7 +72,7 @@ export default function TaskPlanner() {
     setInputValue((prevInputValue) =>
       prevInputValue.map((prevInputVal) =>
         prevInputVal.id === id
-          ? { ...prevInputVal, title: editedTitle, isEditing: false }
+          ? { ...prevInputVal, title: editedTitle, isEditing: false } //updating the state with previous state value with new state value
           : prevInputVal
       )
     );
@@ -82,6 +93,9 @@ export default function TaskPlanner() {
             ) : (
               <InnerRow>
                 <div>{inputValues.title}</div>
+                {enteredDate.map((enteredDates) => (
+                  <OuterDate>{enteredDates.dateValue}</OuterDate>
+                ))}
                 <InnerRow>
                   <DeleteBtn>
                     <AiOutlineDelete
@@ -109,12 +123,16 @@ export default function TaskPlanner() {
           </div>
           {/* <div>ALL</div> */}
         </OuterAddTask>
-        <DivItems>{result}</DivItems>
+        <DivItems>
+          {result}
+          <br />
+        </DivItems>
       </ContainerBg>
       {addTaskList && (
         <AddTaskPopup
           removePopup={popupHandler}
           inputValfromAddTaskPopup={handleInputValue}
+          enteredDateFromAddTaskPopup={handleEnteredDate}
         />
       )}
     </>
