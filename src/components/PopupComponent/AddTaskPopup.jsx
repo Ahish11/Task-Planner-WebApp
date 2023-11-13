@@ -12,35 +12,47 @@ import { Overlay, CancelBtn } from "./AddTaskPopup.styles";
 import { AddTaskBtn, SaveAddBtn } from "../TaskComponent/TaskPlanner.styles";
 
 export default function AddTaskPopup(props) {
-  const [addInputVal, setAddInputVal] = useState([{ title: "" }]);
-  const [errorMsg, setErrorMsg] = useState(false);
+  const [addInputVal, setAddInputVal] = useState("");
   const enteredDate = useRef();
 
-  const isEmptyHandler = () =>
-    // addInputVal.filter((addInputVals) => addInputVals.title.trim().length === 0).length > 0; or
-    addInputVal.filter((addInputVals) => addInputVals.title.trim()).length <= 0;
+  const [errorMsg, setErrorMsg] = useState(false);
+  const [errorMsgDate, setErrorMsgDate] = useState(false);
+
+  const filteredValue = addInputVal.trimStart().length === 0;
+
+  // const isEmptyHandler = () =>{}
+  // addInputVal.filter((addInputVals) => addInputVals.title.trim().length === 0).length > 0; or
+  // addInputVal.filter((addInputVals) => addInputVals.title.trim()).length <= 0;
 
   const saveTaskHandler = (e) => {
     e.preventDefault();
-    console.log(enteredDate.current.value);
-    if (isEmptyHandler()) {
+    const formattedDate = enteredDate.current.value;
+    const [year, month, day] = formattedDate.split("-");
+    const formattedDates = `${day}/${month}/${year}`;
+
+    // formattedDate.length === 0 ? console.log("emty") : console.log("not emty");
+    if (filteredValue) {
       setErrorMsg(true);
+    } else if (formattedDate.length === 0) {
+      setErrorMsgDate(true);
     } else {
-      const titles = addInputVal.map((item) => item.title);
-      props.inputValfromAddTaskPopup(titles);//title
-      props.enteredDateFromAddTaskPopup(enteredDate.current.value)//date
-      props.removePopup();//close popup
+      setErrorMsgDate(false);
+      // const titles = addInputVal.map((item) => item.title);
+      props.inputValfromAddTaskPopup(addInputVal, formattedDates); //title
+      // props.enteredDateFromAddTaskPopup(formattedDates); //date
+      props.removePopup(); //close popup
     }
   };
 
   const handleOnchange = (e) => {
-    setAddInputVal([{ title: e.target.value }]);
+    // setAddInputVal([{ title: e.target.value }]);
+    setAddInputVal(e.target.value);
     setErrorMsg(false);
   };
 
-  //Add Task btn click
-  const filteredValue =
-    addInputVal.filter((item) => item.title.trim().length > 0)[0]?.title || "";
+  // //Add Task btn click
+  // const filteredValue =
+  //   addInputVal.filter((item) => item.title.trim().length > 0)[0]?.title || "";
 
   return (
     <>
@@ -57,7 +69,7 @@ export default function AddTaskPopup(props) {
                   border: errorMsg ? "1px solid red" : "1px solid #fafafa",
                 }}
                 type="text"
-                value={filteredValue}
+                value={addInputVal}
                 onChange={handleOnchange}
               />
               {errorMsg && <ErrorMsg>Please enter the title</ErrorMsg>}
@@ -71,11 +83,9 @@ export default function AddTaskPopup(props) {
                 //   border: errorMsg ? "1px solid red" : "1px solid #fafafa",
                 // }}
                 type="date"
-                // value={filteredValue}
                 ref={enteredDate}
-                // onChange={handleOnchange}
               />
-              {/* {errorMsg && <ErrorMsg>Please enter the title</ErrorMsg>} */}
+              {errorMsgDate && <ErrorMsg>Please enter the Date</ErrorMsg>}
             </WraperInputLabel>
             <div
               style={{

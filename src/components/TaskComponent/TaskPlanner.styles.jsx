@@ -27,12 +27,12 @@ export const Todos = styled.div`
   border-radius: 2px;
   padding: 20px 8px;
   width: calc(100% - 20px);
+  position: relative;
 `;
 export const InnerRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
 `;
 export const NoTodo = styled(CommonButton)`
   background-color: #dedfe1;
@@ -78,8 +78,8 @@ export const DeleteBtn = styled(EditBtn)``;
 
 export const OuterDate = styled.div`
   position: absolute;
-  top: 28px;
-  left: 0px;
+  top: 74%;
+  left: 8px;
   font-size: 9px;
   font-weight: 600;
   color: cadetblue;

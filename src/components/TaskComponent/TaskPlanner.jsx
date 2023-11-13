@@ -29,93 +29,79 @@ export default function TaskPlanner() {
   `;
 
   const [addTaskList, setAddList] = useState(false); // Popup
-  const [inputValue, setInputValue] = useState([]); // Task list
-  const [enteredDate, setEnteredDate] = useState([]); // date
 
-  console.log("enteredDate", enteredDate);
+  // const [inputValue, setInputValue] = useState(""); // title
+  // const [enteredDate, setEnteredDate] = useState(""); // date
+  const [list, setList] = useState([]);
 
+  // const [isEdit, setIsEdit] = useState(false);
+
+  console.log("list", list);
   const popupHandler = () => {
     setAddList(!addTaskList); //shows popup
   };
 
-  //child to parent
-  const handleInputValue = (getTitle) => {
-    const newTask = { id: Date.now(), title: getTitle };
-    setInputValue([...inputValue, newTask]);
-    popupHandler(); //removes popup
-  };
-  const handleEnteredDate = (getEnteredDate) => {
-    console.log("getEnteredDate", getEnteredDate);
-    const newTasks = { id: Date.now(), dateValue: getEnteredDate };
-    setEnteredDate([...enteredDate, newTasks]);
-    popupHandler(); //removes popup
+  const submitHandler = (title, date) => {
+    setList([...list, { id: list.length, title, date, isEditing: false }]);
+    // console.log("date,title", title, date);
   };
 
-  const onDeleteHandler = (getInpVal) => {
-    setInputValue(
-      inputValue.filter((inputValues) => inputValues.id !== getInpVal)
+  const onDeleteHandler = (listsId) => {
+    setList(list.filter((lists) => lists.id !== listsId));
+  };
+
+  //display edit component
+
+  const onEditHandler = (listId) => {
+    setList(
+      list.map((lists) =>
+        lists.id === listId ? { ...lists, isEditing: true } : lists
+      )
     );
   };
 
+  //old problem code
+  // const editPrevStateHandler = (getTitle, getId) => {
+  //   setList((prevList) => {
+  //     console.log("prevList", prevList);
+  //     prevList.map((prevLists) =>
+  //       prevLists.id === getId ? { ...prevLists, title: getTitle } : prevLists
+  //     );
+  //   });
+  // };
 
+  const editPrevStateHandler = (getTitle, getId, getDates) => {
+    setList((prevList) =>
+      prevList.map((prevLists) =>
+        prevLists.id === getId
+          ? { ...prevLists, title: getTitle, date: getDates, isEditing: false }
+          : prevLists
+      )
+    );
+  };
 
-  
-  // Edit btn
-  const onEditHandler = (getInputValuesId) => {
+  /*
+  //onclicking edit btn
+  const onEditHandler = (getInputValues) => {
     setInputValue(
       inputValue.map((inputValues) =>
-        inputValues.id === getInputValuesId
+        inputValues.id === getInputValues
           ? { ...inputValues, isEditing: !inputValues.isEditing }
           : inputValues
       )
     );
   };
-
   const editTaskHandler = (editedTitle, id) => {
     setInputValue((prevInputValue) =>
       prevInputValue.map((prevInputVal) =>
         prevInputVal.id === id
-          ? { ...prevInputVal, title: editedTitle, isEditing: false } //updating the state with previous state value with new state value
+          ? { ...prevInputVal, title: editedTitle, isEditing: false }
           : prevInputVal
       )
     );
   };
+  */
 
-  const result =
-    inputValue.length === 0 ? (
-      <NoTodo>No Todo's Found</NoTodo>
-    ) : (
-      inputValue.map((inputValues) => (
-        <Todos key={inputValues.id}>
-          <div>
-            {inputValues.isEditing ? (
-              <EditComponent
-                hasInputValue={inputValues}
-                hasEditHandler={editTaskHandler}
-              /> // Use EditComponent when editing
-            ) : (
-              <InnerRow>
-                <div>{inputValues.title}</div>
-                {enteredDate.map((enteredDates) => (
-                  <OuterDate>{enteredDates.dateValue}</OuterDate>
-                ))}
-                <InnerRow>
-                  <DeleteBtn>
-                    <AiOutlineDelete
-                      style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
-                      onClick={() => onDeleteHandler(inputValues.id)}
-                    />
-                  </DeleteBtn>
-                  <EditBtn onClick={() => onEditHandler(inputValues.id)}>
-                    <FaRegEdit style={{ cursor: "pointer" }} />
-                  </EditBtn>
-                </InnerRow>
-              </InnerRow>
-            )}
-          </div>
-        </Todos>
-      ))
-    );
   return (
     <>
       <ContainerBg>
@@ -127,15 +113,45 @@ export default function TaskPlanner() {
           {/* <div>ALL</div> */}
         </OuterAddTask>
         <DivItems>
-          {result}
-          <br />
+          {list.length === 0 ? (
+            <NoTodo>No Todo's Found</NoTodo>
+          ) : (
+            list.map((lists) => (
+              <Todos key={lists.id}>
+                <div>
+                  {lists.isEditing ? (
+                    <EditComponent
+                      hasInputValue={lists}
+                      hasEditHandler={editPrevStateHandler}
+                    />
+                  ) : (
+                    <InnerRow>
+                      <div>{lists.title}</div>
+                      <OuterDate>{lists.date}</OuterDate>
+                      <InnerRow>
+                        <DeleteBtn>
+                          <AiOutlineDelete
+                            style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
+                            onClick={() => onDeleteHandler(lists.id)}
+                          />
+                        </DeleteBtn>
+                        <EditBtn onClick={() => onEditHandler(lists.id)}>
+                          <FaRegEdit style={{ cursor: "pointer" }} />
+                        </EditBtn>
+                      </InnerRow>
+                    </InnerRow>
+                  )}
+                </div>
+              </Todos>
+            ))
+          )}
         </DivItems>
       </ContainerBg>
       {addTaskList && (
         <AddTaskPopup
           removePopup={popupHandler}
-          inputValfromAddTaskPopup={handleInputValue}
-          enteredDateFromAddTaskPopup={handleEnteredDate}
+          inputValfromAddTaskPopup={submitHandler}
+          // enteredDateFromAddTaskPopup={submitHandler}
         />
       )}
     </>
