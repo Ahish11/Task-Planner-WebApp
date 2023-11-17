@@ -15,7 +15,7 @@ import {
   OuterDate,
 } from "./TaskPlanner.styles";
 import AddTaskPopup from "../PopupComponent/AddTaskPopup";
-import EditComponent from "../EditComponent"; // Import EditComponent
+import EditComponent from "../EditComponent";
 
 export default function TaskPlanner() {
   const ContainerBg = styled.div`
@@ -29,93 +29,41 @@ export default function TaskPlanner() {
   `;
 
   const [addTaskList, setAddList] = useState(false); // Popup
-  const [inputValue, setInputValue] = useState([]); // Task list
-  const [enteredDate, setEnteredDate] = useState([]); // date
+  const [list, setList] = useState([]);
 
-  console.log("enteredDate", enteredDate);
-
+  // console.log("list", list);
   const popupHandler = () => {
     setAddList(!addTaskList); //shows popup
   };
 
-  //child to parent
-  const handleInputValue = (getTitle) => {
-    const newTask = { id: Date.now(), title: getTitle };
-    setInputValue([...inputValue, newTask]);
-    popupHandler(); //removes popup
-  };
-  const handleEnteredDate = (getEnteredDate) => {
-    console.log("getEnteredDate", getEnteredDate);
-    const newTasks = { id: Date.now(), dateValue: getEnteredDate };
-    setEnteredDate([...enteredDate, newTasks]);
-    popupHandler(); //removes popup
+  const submitHandler = (title, date) => {
+    setList([...list, { id: list.length, title, date, isEditing: false }]);
+    // console.log("date,title", title, date);
   };
 
-  const onDeleteHandler = (getInpVal) => {
-    setInputValue(
-      inputValue.filter((inputValues) => inputValues.id !== getInpVal)
-    );
+  const onDeleteHandler = (listsId) => {
+    setList(list.filter((lists) => lists.id !== listsId));
   };
 
-
-
-  
-  // Edit btn
-  const onEditHandler = (getInputValuesId) => {
-    setInputValue(
-      inputValue.map((inputValues) =>
-        inputValues.id === getInputValuesId
-          ? { ...inputValues, isEditing: !inputValues.isEditing }
-          : inputValues
+  //display edit component
+  const onEditHandler = (listId) => {
+    setList(
+      list.map((lists) =>
+        lists.id === listId ? { ...lists, isEditing: true } : lists
       )
     );
   };
 
-  const editTaskHandler = (editedTitle, id) => {
-    setInputValue((prevInputValue) =>
-      prevInputValue.map((prevInputVal) =>
-        prevInputVal.id === id
-          ? { ...prevInputVal, title: editedTitle, isEditing: false } //updating the state with previous state value with new state value
-          : prevInputVal
+  const editPrevStateHandler = (getTitle, getId, getDates) => {
+    setList((prevList) =>
+      prevList.map((prevLists) =>
+        prevLists.id === getId
+          ? { ...prevLists, title: getTitle, date: getDates, isEditing: false }
+          : prevLists
       )
     );
   };
 
-  const result =
-    inputValue.length === 0 ? (
-      <NoTodo>No Todo's Found</NoTodo>
-    ) : (
-      inputValue.map((inputValues) => (
-        <Todos key={inputValues.id}>
-          <div>
-            {inputValues.isEditing ? (
-              <EditComponent
-                hasInputValue={inputValues}
-                hasEditHandler={editTaskHandler}
-              /> // Use EditComponent when editing
-            ) : (
-              <InnerRow>
-                <div>{inputValues.title}</div>
-                {enteredDate.map((enteredDates) => (
-                  <OuterDate>{enteredDates.dateValue}</OuterDate>
-                ))}
-                <InnerRow>
-                  <DeleteBtn>
-                    <AiOutlineDelete
-                      style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
-                      onClick={() => onDeleteHandler(inputValues.id)}
-                    />
-                  </DeleteBtn>
-                  <EditBtn onClick={() => onEditHandler(inputValues.id)}>
-                    <FaRegEdit style={{ cursor: "pointer" }} />
-                  </EditBtn>
-                </InnerRow>
-              </InnerRow>
-            )}
-          </div>
-        </Todos>
-      ))
-    );
   return (
     <>
       <ContainerBg>
@@ -124,18 +72,46 @@ export default function TaskPlanner() {
           <div>
             <AddTaskBtn onClick={popupHandler}>Add Task</AddTaskBtn>
           </div>
-          {/* <div>ALL</div> */}
         </OuterAddTask>
         <DivItems>
-          {result}
-          <br />
+          {list.length === 0 ? (
+            <NoTodo>No Todo's Found</NoTodo>
+          ) : (
+            list.map((lists) => (
+              <Todos key={lists.id}>
+                <div>
+                  {lists.isEditing ? (
+                    <EditComponent
+                      hasInputValue={lists}
+                      hasEditHandler={editPrevStateHandler}
+                    />
+                  ) : (
+                    <InnerRow>
+                      <div>{lists.title}</div>
+                      <OuterDate>{lists.date}</OuterDate>
+                      <InnerRow>
+                        <DeleteBtn>
+                          <AiOutlineDelete
+                            style={{ margin: "0 8px 0 5px", cursor: "pointer" }}
+                            onClick={() => onDeleteHandler(lists.id)}
+                          />
+                        </DeleteBtn>
+                        <EditBtn onClick={() => onEditHandler(lists.id)}>
+                          <FaRegEdit style={{ cursor: "pointer" }} />
+                        </EditBtn>
+                      </InnerRow>
+                    </InnerRow>
+                  )}
+                </div>
+              </Todos>
+            ))
+          )}
         </DivItems>
       </ContainerBg>
       {addTaskList && (
         <AddTaskPopup
           removePopup={popupHandler}
-          inputValfromAddTaskPopup={handleInputValue}
-          enteredDateFromAddTaskPopup={handleEnteredDate}
+          inputValfromAddTaskPopup={submitHandler}
         />
       )}
     </>
