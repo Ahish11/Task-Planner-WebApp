@@ -42,6 +42,8 @@ export default function EditComponent({ hasEditHandler, hasInputValue }) {
           justifyContent: "space-between",
           flexDirection: "column",
           rowGap: "9px",
+          flexDirection: "column",
+          rowGap: "9px",
         }}
       >
         <input
